@@ -5,11 +5,11 @@ const
     config = require('./config/config'),
     version = config.get('version');
 
-// if(dotenv.error){
-//   console.log("broken here");
-//   console.log(dotenv.error);
-//   process.exit(1);
-// }
+if(dotenv.error){
+  console.log("broken here");
+  console.log(dotenv.error);
+  process.exit(1);
+}
 
 const app = express();
 

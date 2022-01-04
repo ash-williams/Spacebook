@@ -1,10 +1,11 @@
 {
-  "name": "CoffiDa-API",
+  "name": "Spacebook-API",
   "version": "1.0.0",
   "license": "MIT",
   "repository": "",
   "scripts": {
     "start": "node server.js --python=python2.7",
+    "dev": "nodemon server.js",
     "test": "mocha ./tests/test.*.js --reporter spec --log-level=warn --timeout 10000 --python=python2.7",
     "ci": "start-server-and-test start http://localhost:3333/api/1.0.0/ test"
   },
@@ -25,6 +26,7 @@
     "z-schema": "^4.1.1"
   },
   "devDependencies": {
+    "nodemon": "^2.0.15",
     "start-server-and-test": "^1.12.0"
   }
 }

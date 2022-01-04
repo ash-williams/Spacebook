@@ -1,0 +1,907 @@
+---
+openapi: 3.0.0
+info:
+  title: Spacebook
+  description: Mobile Apps 21-22
+  contact:
+    name: Ashley Williams
+    email: ashley.williams@mmu.ac.uk
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /user:
+    post:
+      tags:
+      - User Management
+      summary: Add a new user
+      description: "Will create a new user in the system. \n\nEmail must be valid and password must be greater than 5 characters.\n"
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUser'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignUpResponse'
+        "400":
+          description: Bad Request
+        "500":
+          description: Server Error
+  /login:
+    post:
+      tags:
+      - User Management
+      summary: Log into an account
+      description: |
+        Will log a user into their account
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        "400":
+          description: Invalid email/password supplied
+        "500":
+          description: Server Error
+  /logout:
+    post:
+      tags:
+      - User Management
+      summary: Log out of an account
+      description: |
+        Will log a user out of their account
+      operationId: logoutUser
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /user/{user_id}:
+    get:
+      tags:
+      - User Management
+      summary: Get user information
+      description: |
+        Retrieve all of the information about a user
+      operationId: getUser
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+    patch:
+      tags:
+      - User Management
+      summary: Update user information
+      description: |
+        Update a users profile/password
+      operationId: updateUser
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUser'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorised
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /user/{user_id}/photo:
+    get:
+      tags:
+      - User Management
+      summary: Get a users profile photo
+      description: |
+        Retrieve a profil photo for a user
+      operationId: getProfilePhoto
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            image/png:
+              schema:
+                $ref: '#/components/schemas/BinaryImageFile'
+            image/jpeg:
+              schema:
+                $ref: '#/components/schemas/BinaryImageFile'
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+    post:
+      tags:
+      - User Management
+      summary: Upload a profile photo
+      description: |
+        Upload a profile photo
+      operationId: addProfilePhoto
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          image/png:
+            schema:
+              $ref: '#/components/schemas/BinaryImageFile'
+          image/jpeg:
+            schema:
+              $ref: '#/components/schemas/BinaryImageFile'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /user/{user_id}/friends:
+    get:
+      tags:
+      - Friend Management
+      summary: Get list of friends for a given user
+      description: |
+        Get a list of friends for a given user
+      operationId: getFriendsList
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        "401":
+          description: Unauthorised
+        "403":
+          description: Can only view the friends of yourself or your friends
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+    post:
+      tags:
+      - Friend Management
+      summary: Add a new friend
+      description: |
+        Add a given user as a friend
+      operationId: addFriend
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "403":
+          description: User is already added as a friend
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /friendrequests:
+    get:
+      tags:
+      - Friend Management
+      summary: Get list of outstanding friends requests
+      description: |
+        Get list of outstanding friends requests
+      operationId: getFriendRequests
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        "401":
+          description: Unauthorised
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /friendrequests/{user_id}:
+    post:
+      tags:
+      - Friend Management
+      summary: Accept a friend request
+      description: |
+        Accept a friend request from a given user
+      operationId: acceptFriend
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+    delete:
+      tags:
+      - Friend Management
+      summary: Reject a friend request
+      description: |
+        Reject a friend request from a given user
+      operationId: rejectFriend
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /search:
+    get:
+      tags:
+      - Friend Management
+      summary: Find friends
+      description: |
+        Search the list of users
+      operationId: searchFriends
+      parameters:
+      - name: q
+        in: query
+        description: The query string to search for
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: Ash Williams
+      - name: search_in
+        in: query
+        description: Only include users in your one of your lists
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - friends
+          - all
+      - name: limit
+        in: query
+        description: The number of items to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 20
+      - name: offset
+        in: query
+        description: The number of items to skip before starting to collect the result set (e.g. for pagination)
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorised
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /user/{user_id}/post:
+    get:
+      tags:
+      - Post Management
+      summary: Get list of posts for a given user
+      description: |
+        Get a list of posts for a given user
+      operationId: getPostList
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: The number of items to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 20
+      - name: offset
+        in: query
+        description: The number of items to skip before starting to collect the result set (e.g. for pagination)
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posts'
+        "401":
+          description: Unauthorised
+        "403":
+          description: Can only view the posts of yourself or your friends
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+    post:
+      tags:
+      - Post Management
+      summary: Add a new post
+      description: |
+        Add a post to a given uses profile
+      operationId: addPost
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "201":
+          description: Created
+        "401":
+          description: Unauthorised
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /user/{user_id}/post/{post_id}:
+    get:
+      tags:
+      - Post Management
+      summary: View a single post
+      description: |
+        Get a single post
+      operationId: getPost
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: post_id
+        in: path
+        description: A unique integer ID for identifying a Post
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        "401":
+          description: Unauthorised
+        "403":
+          description: Can only view the posts of yourself or your friends
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+    delete:
+      tags:
+      - Post Management
+      summary: Delete a post
+      description: |
+        Delete a users post
+      operationId: deletePost
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: post_id
+        in: path
+        description: A unique integer ID for identifying a Post
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "403":
+          description: Forbidden - you can only delete your own posts
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+    patch:
+      tags:
+      - Post Management
+      summary: Update a post
+      description: |
+        Update a users post
+      operationId: updatePost
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: post_id
+        in: path
+        description: A unique integer ID for identifying a Post
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorised
+        "403":
+          description: Forbidden - you can only update your own posts
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /user/{user_id}/post/{post_id}/like:
+    post:
+      tags:
+      - Post Management
+      summary: Like a post
+      description: |
+        Add a like to an existing post
+      operationId: addPostLike
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: post_id
+        in: path
+        description: A unique integer ID for identifying a Post
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "403":
+          description: Forbidden - You have already liked this post
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+    delete:
+      tags:
+      - Post Management
+      summary: Remove a like from a post
+      description: |
+        Remove a like from an existing post
+      operationId: deletePostLike
+      parameters:
+      - name: user_id
+        in: path
+        description: A unique integer ID for identifying a User
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: post_id
+        in: path
+        description: A unique integer ID for identifying a Post
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorised
+        "403":
+          description: Forbidden -  you have not liked this post
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      security:
+      - User: []
+  /reset:
+    post:
+      tags:
+      - Backdoor
+      summary: Force reset of database to original structure.
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+  /resample:
+    post:
+      tags:
+      - Backdoor
+      summary: Reload sample of data into database.
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+components:
+  schemas:
+    AddUser:
+      required:
+      - email
+      - first_name
+      - last_name
+      - password
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: Ashley
+        last_name:
+          type: string
+          example: Williams
+        email:
+          type: string
+          format: email
+          example: ashley.williams@mmu.ac.uk
+        password:
+          type: string
+          example: hello123
+    SignUpResponse:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 14
+    LoginUser:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: ashley.williams@mmu.ac.uk
+        password:
+          type: string
+          example: hello123
+    LoginResponse:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 14
+        session_token:
+          type: string
+          example: b5d9e7be6c97aa855f721b6e742120f2
+    User:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 14
+        first_name:
+          type: string
+          example: Ashley
+        last_name:
+          type: string
+          example: Williams
+        email:
+          type: string
+          format: email
+          example: ashley.williams@mmu.ac.uk
+        friend_count:
+          type: integer
+          example: 1025
+    UpdateUser:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: Ashley
+        last_name:
+          type: string
+          example: Williams
+        email:
+          type: string
+          format: email
+          example: ashley.williams@mmu.ac.uk
+        password:
+          type: string
+          example: hello123
+    BinaryImageFile:
+      type: string
+      description: The raw content of the JPEG or PNG image file.
+      format: binary
+    Users:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+    Post:
+      required:
+      - text
+      type: object
+      properties:
+        post_id:
+          type: integer
+          example: 743
+        text:
+          type: string
+          example: Welcome to Spacebook. It's great to see you here :)
+        timestamp:
+          type: integer
+          example: 1640013942
+        author:
+          $ref: '#/components/schemas/User'
+        numLikes:
+          type: integer
+          example: 34
+    Posts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Post'
+  parameters:
+    user_id:
+      name: user_id
+      in: path
+      description: A unique integer ID for identifying a User
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+    post_id:
+      name: post_id
+      in: path
+      description: A unique integer ID for identifying a Post
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+    q:
+      name: q
+      in: query
+      description: The query string to search for
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        example: Ash Williams
+    search_in:
+      name: search_in
+      in: query
+      description: Only include users in your one of your lists
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - friends
+        - all
+    limit:
+      name: limit
+      in: query
+      description: The number of items to return
+      required: false
+      style: form
+      explode: true
+      schema:
+        maximum: 100
+        minimum: 1
+        type: integer
+        default: 20
+    offset:
+      name: offset
+      in: query
+      description: The number of items to skip before starting to collect the result set (e.g. for pagination)
+      required: false
+      style: form
+      explode: true
+      schema:
+        minimum: 0
+        type: integer
+        default: 0
+  securitySchemes:
+    User:
+      type: apiKey
+      name: X-Authorization
+      in: header

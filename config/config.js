@@ -8,7 +8,7 @@ let config = convict({
     },
     specification:{
       format: String,
-      default: 'zedrem-CoffiDa-1.0.0-swagger.json'
+      default: 'zedrem-Spacebook-1.0.0-swagger.json'
     },
     authToken: {
         format: String,

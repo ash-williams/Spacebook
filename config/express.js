@@ -48,8 +48,7 @@ module.exports = function(){
     });
 
     require('../app/routes/user.server.routes')(app);
-    require('../app/routes/review.server.routes')(app);
-    require('../app/routes/location.server.routes')(app);
+
     require('../app/routes/backdoor.server.routes')(app);
 
     return app;

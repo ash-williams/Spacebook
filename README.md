@@ -1,10 +1,10 @@
-# CoffiDa API
+# Spacebook API
 
 [![Build Status](https://travis-ci.com/ash-williams/coffida_with_CI.svg?branch=main)](https://travis-ci.com/ash-williams/coffida_with_CI)
 
-This is the CoffiDa API for use in the 20/21 MAD assignment.
+This is the Spacebook API for use in the 21/22 MAD assignment.
 
-To get started, read the assignment brief and watch the assignment video (week 2).
+To get started, read the assignment brief and attend the assignment lecture.
 
 For queries, contact Ashley Williams (ashley.williams@mmu.ac.uk).
 

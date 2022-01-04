@@ -1,0 +1,30 @@
+{
+  "name": "CoffiDa-API",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": "",
+  "scripts": {
+    "start": "node server.js --python=python2.7",
+    "test": "mocha ./tests/test.*.js --reporter spec --log-level=warn --timeout 10000 --python=python2.7",
+    "ci": "start-server-and-test start http://localhost:3333/api/1.0.0/ test"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.12",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "convict": "^5.1.0",
+    "dotenv": "^8.2.0",
+    "email-validator": "^2.0.4",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "mocha": "^8.1.3",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "mysql": "^2.17.1",
+    "swagger-parameters": "^1.3.2",
+    "z-schema": "^4.1.1"
+  },
+  "devDependencies": {
+    "start-server-and-test": "^1.12.0"
+  }
+}

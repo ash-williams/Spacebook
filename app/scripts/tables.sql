@@ -42,8 +42,8 @@ CREATE TABLE spacebook_posts (
   post_profile int(10) NOT NULL,
   post_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (post_id),
-  UNIQUE KEY post_id (post_id)
-  CONSTRAINT fk_post_author FOREIGN KEY (post_author) REFERENCES spacebook_users (user_id)
+  UNIQUE KEY post_id (post_id),
+  CONSTRAINT fk_post_author FOREIGN KEY (post_author) REFERENCES spacebook_users (user_id),
   CONSTRAINT fk_post_profile FOREIGN KEY (post_profile) REFERENCES spacebook_users (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -51,15 +51,15 @@ CREATE TABLE spacebook_friends (
   friend_user_id int(10) NOT NULL,
   friend_friend_id int(10) NOT NULL,
   status varchar(50) NOT NULL,
-  PRIMARY KEY (user_id, friend_id),
+  PRIMARY KEY (friend_user_id, friend_friend_id),
   CONSTRAINT fk_friend_userid FOREIGN KEY (friend_user_id) REFERENCES spacebook_users (user_id),
   CONSTRAINT fk_friend_friendid FOREIGN KEY (friend_friend_id) REFERENCES spacebook_users (user_id)
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE spacebook_likes (
   like_post_id int(10) NOT NULL,
   like_user_id int(10) NOT NULL,
-  PRIMARY KEY (post_id, user_id),
+  PRIMARY KEY (like_post_id, like_user_id),
   CONSTRAINT fk_likes_postid FOREIGN KEY (like_post_id) REFERENCES spacebook_posts (post_id),
   CONSTRAINT fk_likes_userid FOREIGN KEY (like_user_id) REFERENCES spacebook_users (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

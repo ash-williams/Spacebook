@@ -18,7 +18,9 @@ const allowCrossOriginRequests = (req, res, next) => {
 // Determine correct body parser to use
 const jsonParser = bodyParser.json();
 const rawParser = rawBodyParser.rawParser;
-const upload = multer({ limits: { fileSize: 20e6 } });
+const upload = multer({ limits: { fileSize: '50Mb' } });
+
+
 
 
 const dynamicBodyParser = (req, res, next) => {
@@ -34,6 +36,7 @@ module.exports = function(){
     const app = express();
 
     app.use(dynamicBodyParser);
+
     app.use(allowCrossOriginRequests);
 
     app.use((req, res, next) => {
@@ -48,6 +51,7 @@ module.exports = function(){
     });
 
     require('../app/routes/user.server.routes')(app);
+    require('../app/routes/friend.server.routes')(app);
 
     require('../app/routes/backdoor.server.routes')(app);
 

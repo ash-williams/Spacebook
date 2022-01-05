@@ -6,25 +6,27 @@ const
   schema = require('../../config/' + config.get('specification')),
   emailvalidator = require("email-validator");
 
+const photo_tools = require('../lib/photo.tools.js');
+
 
 
 const create = (req, res) => {
   if (!validator.isValidSchema(req.body, 'components.schemas.AddUser')) {
         log.warn(`users.controller.create: bad user ${JSON.stringify(req.body)}`);
         log.warn(validator.getLastErrors());
-        return res.sendStatus(400);
+        return res.status(400).send('Bad Request - body must match specification and email must be correct');
     } else {
         let user = Object.assign({}, req.body);
 
         if(!emailvalidator.validate(user['email']) || user['password'].length <= 5){
             log.warn(`user.controller.create: failed validation ${JSON.stringify(user)}`);
-            res.status(400).send('Bad Request');
+            res.status(400).send('Bad request - email must be valid and password greater than 5 characters');
         }else{
             users.insert(user, function(err, id){
                 if (err)
                 {
                     log.warn(`user.controller.create: couldn't create ${JSON.stringify(user)}: ${err}`);
-                    res.status(400).send('Bad Request');
+                    res.status(400).send('Bad Request - database error. Check the log. Possibly duplicate entry?');
                 }else{
                   res.status(201).send({id:id});
                 }
@@ -38,7 +40,7 @@ const create = (req, res) => {
 const login = (req, res) => {
   if(!validator.isValidSchema(req.body, 'components.schemas.LoginUser')){
     log.warn(`users.controller.login: bad request ${JSON.stringify(req.body)}`);
-    res.status(400).send('Bad Request');
+    res.status(400).send('Bad Request - request must match the spec');
   } else{
     let email = req.body.email;
     let password = req.body.password;
@@ -104,8 +106,6 @@ const update = (req, res) => {
     let id = parseInt(req.params.usr_id);
     if (!validator.isValidId(id)) return res.sendStatus(404);
 
-    console.log("valid id")
-
     let token = req.get(config.get('authToken'));
     users.getIdFromToken(token, function(err, _id){
         if (_id !== id)
@@ -153,6 +153,11 @@ const update = (req, res) => {
                 let user = {};
 
                 if(password != ''){
+
+                    if(password.length <= 5){
+                        return res.status(400).send('Weak password');
+                    }
+
                     user = {
                         "first_name": givenname,
                         "last_name": familyname,
@@ -180,6 +185,82 @@ const update = (req, res) => {
     });
 }
 
+const get_profile_photo = (req, res) => {
+    let id = parseInt(req.params.usr_id);
+    if (!validator.isValidId(id)) return res.sendStatus(404);
+
+    users.getOne(id, async function(err, user){
+        if(err){
+            return res.sendStatus(500);
+        }else if(!user){
+            return res.sendStatus(404);
+        }else{
+            users.retreivePhoto(id, (imageDetails, err) => {
+                if(err == "Doesn't exist"){
+                    return res.sendStatus(404);
+                }else if(err){
+                    return res.sendStatus(500);
+                }else{
+                    return res.status(200)
+                        .contentType(imageDetails.mimeType)
+                        .send(imageDetails.image);
+                }
+            });
+        }
+    });
+}
+
+const add_profile_photo = (req, res) => {
+    let id = parseInt(req.params.usr_id);
+    if (!validator.isValidId(id)) return res.sendStatus(404);
+      
+    if(req.header('Content-Type') == 'application/json'){
+        res.status(400).send('Bad Request: content type cannot be JSON')
+    }
+      
+    let token = req.get(config.get('authToken'));
+    users.getIdFromToken(token, function(err, _id){
+        users.getOne(id, async function(err, user){
+            if(err){
+                return res.sendStatus(500);
+            }else if(!user){
+                return res.sendStatus(404);
+            }else{
+                if(_id != user.user_id){
+                    return res.sendStatus(403);
+                }else{
+                    users.deletePhotoIfExists(id, async function(err){
+                        if(err){
+                            console.log(err);
+                            res.sendStatus(500);
+                        }else{
+                            let image = req;
+                            let fileExt = photo_tools.getImageExtension(req.header('Content-Type'));
+        
+                            if(!fileExt){
+                                res.status(400).send('Bad Request: photo must be either image/jpeg or image/png type');
+                            }else{
+                                try{
+                                    await users.addPhoto(image, fileExt, id, function(err){
+                                        if(err){
+                                            return res.sendStatus(500);
+                                        }else{
+                                            return res.sendStatus(200);
+                                        }
+                                    });
+                                }catch(err){
+                                    console.log(err);
+                                    return res.sendStatus(500);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    });
+}
+
 
 
 module.exports = {
@@ -187,5 +268,7 @@ module.exports = {
     login: login,
     logout: logout,
     get_one: get_one,
-    update: update
+    update: update,
+    get_profile_photo: get_profile_photo,
+    add_profile_photo: add_profile_photo
 };

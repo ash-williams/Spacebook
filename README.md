@@ -12,7 +12,7 @@ For queries, contact Ashley Williams (ashley.williams@mmu.ac.uk).
 ```
 DB_HOST=<URL for mudfoot>
 DB_PORT=<port number for mudfoot>
-DB_USER=<<your mudfoot username>
+DB_USER=<your mudfoot username>
 DB_PASS=<your mudfoot password>
 ```
 3. Edit the first line in `/app/scripts/tables.sql` and `/app/scripts/dummy_data.sql`. Replace `ashley_student` with your own Mudfoot username.

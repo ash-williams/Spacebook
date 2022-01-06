@@ -1,13 +1,3 @@
-# MySQL scripts for creating/recreating the database
-#
-# Version:		1.0.0
-# Date:			4 January 2022
-# Author:		Ashley Williams
-
-## Dont do this on mudfoot
-# First create the database if it does not already exist...
-# CREATE DATABASE IF NOT EXISTS spacebook;
-
 USE ashley_student; # Change to your mudfoot username
 
 # First drop the tables if they do not already exist

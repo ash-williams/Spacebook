@@ -11,12 +11,12 @@ For queries, contact Ashley Williams (ashley.williams@mmu.ac.uk).
 ## Config
 1. Clone the repository into a directory on your local machine. If you have Git installed on your machine then you can run 'git clone https://github.com/ash-williams/Spacebook'
 2. In the root of the cloned repository, create a .env file with your DB config details. The file should look like the following:
-'''
+```
 DB_HOST=mudfoot.doc.stu.mmu.ac.uk
 DB_PORT=6306
 DB_USER=<<your mudfoot username>
 DB_PASS=<your mudfoot password>
-'''
+```
 3. Edit the first line in '/app/scripts/tables.sql' and '/app/scripts/dummy_data.sql'. Replace of 'ashley_student' with your own Mudfoot username.
 4. Run 'npm install' to install the dependencies
 5. Copy the contents of the yaml file in the resources directory into editor.swagger.io

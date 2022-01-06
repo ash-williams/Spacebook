@@ -52,6 +52,7 @@ module.exports = function(){
 
     require('../app/routes/user.server.routes')(app);
     require('../app/routes/friend.server.routes')(app);
+    require('../app/routes/post.server.routes')(app);
 
     require('../app/routes/backdoor.server.routes')(app);
 

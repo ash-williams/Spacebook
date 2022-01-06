@@ -490,6 +490,11 @@ paths:
         explode: false
         schema:
           type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPost'
       responses:
         "201":
           description: Created
@@ -786,9 +791,6 @@ components:
           type: string
           format: email
           example: ashley.williams@mmu.ac.uk
-        friend_count:
-          type: integer
-          example: 1025
     UpdateUser:
       type: object
       properties:
@@ -813,6 +815,14 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/User'
+    AddPost:
+      required:
+      - text
+      type: object
+      properties:
+        text:
+          type: string
+          example: Welcome to Spacebook. It's great to see you here :)
     Post:
       required:
       - text

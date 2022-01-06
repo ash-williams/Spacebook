@@ -30,7 +30,7 @@ const get_list_of_friends = (req, res) => {
                     return res.sendStatus(500);            
                 }
 
-                if(_id != id || results == null){
+                if(_id != id && results == false){
                     log.warn(`friends.controller.get_list_of_friends: ${JSON.stringify(err)} or user not a friend`);
                     return res.status(403).send("Can only view the friends of yourself or your friends"); 
                 }

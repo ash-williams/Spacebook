@@ -173,33 +173,33 @@ const getNumFriends = (id, done) => {
  * @param done
  */
 const getOne = async (id, done) => {
-    let query = 'SELECT spacebook_users.user_id, spacebook_users.user_givenname, spacebook_users.user_familyname, spacebook_users.user_email FROM spacebook_users WHERE spacebook_users.user_id=?';
-    db.get_pool().query(
-        query,
-        [id],
-        function(err, results){
-            if (err){
-                return done(err, false);
-            }else if(results.length == 0){
-                return done(false, null);
-            }else{
-              let user = results[0];
+  let query = 'SELECT spacebook_users.user_id, spacebook_users.user_givenname, spacebook_users.user_familyname, spacebook_users.user_email FROM spacebook_users WHERE spacebook_users.user_id=?';
+  db.get_pool().query(
+      query,
+      [id],
+      function(err, results){
+          if (err){
+              return done(err, false);
+          }else if(results.length == 0){
+              return done(false, null);
+          }else{
+            let user = results[0];
 
-              let to_return = {
-                  "user_id": user.user_id,
-                  "first_name": user.user_givenname,
-                  "last_name": user.user_familyname,
-                  "email": user.user_email
-              };
+            let to_return = {
+                "user_id": user.user_id,
+                "first_name": user.user_givenname,
+                "last_name": user.user_familyname,
+                "email": user.user_email
+            };
 
-              getNumFriends(user.user_id, function(err, numFriends){
-                if (err){ return done(err, false)}
-                to_return["friend_count"] = numFriends;
-                return done(null, to_return);
-              });
-            }
-        }
-    )
+            getNumFriends(user.user_id, function(err, numFriends){
+              if (err){ return done(err, false)}
+              to_return["friend_count"] = numFriends;
+              return done(null, to_return);
+            });
+          }
+      }
+  )
 };
 
 

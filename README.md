@@ -22,3 +22,4 @@ DB_PASS=<your mudfoot password>
 7. In Postman, send a POST request to 'http://localhost:3333/api/1.0.0/reset' - this will create your database tables
 8. In Postman, send a POST request to 'http://localhost:3333/api/1.0.0/resample' - this will add the dummy data
 9. Continue to test everything is working using Postman
+10. Paste the contents of the YAML file in `/resources/` into 'http://editor.swagger.io' for documentation on each of the end points
